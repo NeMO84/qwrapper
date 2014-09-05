@@ -4,6 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'qwrapper/version'
 
 Gem::Specification.new do |spec|
+
   spec.name          = "qwrapper"
   spec.version       = Qwrapper::VERSION
   spec.authors       = ["Nirmit Patel"]

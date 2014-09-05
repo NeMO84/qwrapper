@@ -1,6 +1,6 @@
 # Qwrapper
 
-TODO: Write a gem description
+QWrapper is an abstract API which makes working with different message queues simple.
 
 ## Installation
 
@@ -10,7 +10,7 @@ Add this line to your application's Gemfile:
 
 And then execute:
 
-    $ bundle
+    $ bundle install
 
 Or install it yourself as:
 
