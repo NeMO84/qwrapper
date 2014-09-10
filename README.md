@@ -1,6 +1,13 @@
-# Qwrapper
+Qwrapper
+========
 
-QWrapper is an abstract API which makes working with different message queues simple.
+[![Gem Version](https://badge.fury.io/rb/qwrapper.svg)](http://badge.fury.io/rb/qwrapper) [![Build Status](https://travis-ci.org/NeMO84/qwrapper.svg?branch=master)](https://travis-ci.org/NeMO84/qwrapper) [![Dependency Status](https://gemnasium.com/NeMO84/qwrapper.svg)](https://gemnasium.com/NeMO84/qwrapper) [![Code Climate](https://codeclimate.com/github/NeMO84/qwrapper/badges/gpa.svg)](https://codeclimate.com/github/NeMO84/qwrapper) [![Test Coverage](https://codeclimate.com/github/NeMO84/qwrapper/badges/coverage.svg)](https://codeclimate.com/github/NeMO84/qwrapper)
+
+QWrapper is an attempt to make queue systems like SQS, AMQP, Redis consisten when advanced features aren't necessary. When simple dequeue, enqueue, poll, subscribe actions are the primary interfaces used then abstracting the logic can really DRY up code and simplyify usage.
+
+## NOTE
+
+This GEM is still in development phase. Please don't use this yet. I am still figuring out best use cases and proper conventions. Feel free to provide insight via issues.
 
 ## Installation
 
@@ -18,7 +25,68 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+### Publish
+
+```ruby
+require "qwrapper"
+
+Qwrapper.config = {
+  queue_type: :rabbitmq,
+  queue_config: {
+    host: "localhost",
+    keepalive: true
+  },
+}
+Qwrapper.queue.publish("qwrapper", "test")
+
+# OR
+config = {
+  host: "localhost",
+  keepalive: true
+}
+queue = Qwrapper::Queues::RabbitMQ.new(config)
+queue.publish("qwrapper", "test2")
+```
+
+
+### Subscribe
+
+```ruby
+require "qwrapper"
+
+# Define custom classes for which to automatically
+# requeue messages for.
+class RetryError < StandardError; end
+
+Qwrapper.config = {
+  queue_type: :rabbitmq,
+  requeue_exceptions: [RetryError, Arguement],
+  queue_config: {
+    host: "localhost",
+    keepalive: true
+  },
+}
+
+Qwrapper.queue.subscribe("qwrapper") do |message, logger|
+  # raise RetryError.new "Something temporary"
+  logger.debug "Doing some work...#{message}"
+  raise RetryError, "Some unexpected error occurred" if [true, false].sample
+end
+
+```
+
+## TODO
+
+  - Add requeue logic
+  - Add poison queue logic
+  - Improve logging
+  - Think up more TODO items; there are plenty of concerns not listed here
+
+
+## Known Issues
+
+TODO:
+
 
 ## Contributing
 
