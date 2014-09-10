@@ -14,13 +14,15 @@ module Qwrapper
           queue.subscribe(ack: true, block: true) do |delivery_info, metadata, payload|
             # TODO find unique way to identify a message and list that as part
             # of the wrap message
-            logger.wrap("SubscribedMessage") do |nested_logger|
-              begin
-                block.call(payload, nested_logger)
-              rescue *requeue_exceptions => ex
-                nested_logger.error "Requeue logic"
-                nested_logger.error ex
+            begin
+              if logger.respond_to?(:wrap)
+                logger_wrapped_block_execution(payload, &block)
+              else
+                block_execution(payload, &block)
               end
+            rescue *requeue_exceptions => ex
+              logger.error "Requeue logic"
+              logger.error ex
             end
             queue.channel.ack(delivery_info.delivery_tag)
           end
@@ -42,6 +44,17 @@ module Qwrapper
 
     private
 
+      def logger_wrapped_block_execution(payload, &block)
+        logger.wrap("SubscribedMessage") do |nested_logger|
+          block.call(payload, nested_logger)
+        end
+      end
+
+      def block_execution(payload, &block)
+        block.call(payload, logger)
+      end
+
+
       def get_queue(queue_name, options={})
         ch = connection.create_channel
         ch.queue(queue_name, options.merge(durable: true))
@@ -59,7 +72,8 @@ module Qwrapper
         {
           host: config[:host] || "localhost",
           port: config[:port] || 5672,
-          logger: logger.duplicate("bunny")
+          logger: logger.duplicate("bunny"),
+          keepalive: config[:keepalive] || true
         }
       end
 

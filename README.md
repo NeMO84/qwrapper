@@ -40,6 +40,7 @@ Qwrapper.config = {
 Qwrapper.queue.publish("qwrapper", "test")
 
 # OR
+
 config = {
   host: "localhost",
   keepalive: true
@@ -60,26 +61,36 @@ class RetryError < StandardError; end
 
 Qwrapper.config = {
   queue_type: :rabbitmq,
-  requeue_exceptions: [RetryError, Arguement],
   queue_config: {
     host: "localhost",
-    keepalive: true
+    requeue_exceptions: [RetryError, Arguement]
   },
 }
-
 Qwrapper.queue.subscribe("qwrapper") do |message, logger|
   # raise RetryError.new "Something temporary"
   logger.debug "Doing some work...#{message}"
   raise RetryError, "Some unexpected error occurred" if [true, false].sample
 end
 
+# OR
+
+config = {
+  host: "localhost",
+  requeue_exceptions: [RetryError]
+}
+queue = Qwrapper::Queues::RabbitMQ.new(config)
+queue.subscribe("qwrapper") do |message, logger|
+  # raise RetryError.new "Something temporary"
+  logger.debug "Doing some work...#{message}"
+  raise RetryError, "Some unexpected error occurred" if [true, false].sample
+end
 ```
 
 ## TODO
 
   - Add requeue logic
   - Add poison queue logic
-  - Improve logging
+  - Improve logging. Make more intuitive w/o abusing it
   - Think up more TODO items; there are plenty of concerns not listed here
 
 
