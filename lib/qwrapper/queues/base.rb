@@ -11,7 +11,7 @@ module Qwrapper
 
       def initialize(options)
         @config = options
-        logger = options[:logger] if options.has_key?(:logger)
+        @logger = options[:logger] if options.has_key?(:logger)
       end
 
       def requeue_exceptions

@@ -69,10 +69,12 @@ module Qwrapper
       end
 
       def connection_details
+        bunny_logger = logger
+        bunny_logger = logger.duplicate("bunny") if logger.respond_to?(:duplicate)
         {
           host: config[:host] || "localhost",
           port: config[:port] || 5672,
-          logger: logger.duplicate("bunny"),
+          logger: bunny_logger,
           keepalive: config[:keepalive] || true
         }
       end

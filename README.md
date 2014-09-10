@@ -32,10 +32,8 @@ require "qwrapper"
 
 Qwrapper.config = {
   queue_type: :rabbitmq,
-  queue_config: {
-    host: "localhost",
-    keepalive: true
-  },
+  host: "localhost",
+  keepalive: true
 }
 Qwrapper.queue.publish("qwrapper", "test")
 
@@ -61,10 +59,8 @@ class RetryError < StandardError; end
 
 Qwrapper.config = {
   queue_type: :rabbitmq,
-  queue_config: {
-    host: "localhost",
-    requeue_exceptions: [RetryError, Arguement]
-  },
+  host: "localhost",
+  keepalive: true
 }
 Qwrapper.queue.subscribe("qwrapper") do |message, logger|
   # raise RetryError.new "Something temporary"
