@@ -1,5 +1,6 @@
 require "qwrapper/version"
 require "qwrapper/support"
+require "qwrapper/message"
 require "qwrapper/queues"
 
 # Qwrapper is an idomatic API for working with message queues.
