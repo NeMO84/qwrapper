@@ -61,22 +61,24 @@ module Qwrapper
       end
 
       def connection
-        @conn ||= begin
+        #@conn ||= begin
           Bunny.new(connection_details).tap do |c|
             c.start
           end
-        end
+        #end
       end
 
       def connection_details
-        bunny_logger = logger
-        bunny_logger = logger.duplicate("bunny") if logger.respond_to?(:duplicate)
         {
           host: config[:host] || "localhost",
           port: config[:port] || 5672,
-          logger: bunny_logger,
+          logger: dup_logger,
           keepalive: config[:keepalive] || true
         }
+      end
+
+      def dup_logger
+        logger.respond_to?(:duplicate) ? logger.duplicate("bunny") : logger
       end
 
     end
