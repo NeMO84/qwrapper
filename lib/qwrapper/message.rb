@@ -1,3 +1,5 @@
+require 'json'
+
 module Qwrapper
   class Message
 
@@ -6,12 +8,16 @@ module Qwrapper
     attr_reader :original_body, :hash
 
     def initialize(body)
-      raise ArgumentError.new "Message body cannot be blank" if body.blank?
+      raise ArgumentError.new "Message body cannot be blank" if body.nil? or body.empty?
       @original_body = body
       begin
-        @hash = eval(body.to_s) rescue JSON.parse(body.to_s)
+        begin
+          @hash = eval(body.to_s)
+        rescue SyntaxError => ex
+          @hash = JSON.parse(body.to_s)
+        end
         logger.info "Message evaluated: #{@hash}"
-      rescue => ex
+      rescue Exception => ex
         logger.error "Message body cannot be evaluated: #{body}"
         raise ex
       end
