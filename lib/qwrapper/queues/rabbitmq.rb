@@ -54,9 +54,9 @@ module Qwrapper
         block.call(payload, logger)
       end
 
-
       def get_queue(queue_name, options={})
         ch = connection.create_channel
+        ch.prefetch(config[:prefetch] || 1)
         ch.queue(queue_name, options.merge(durable: true))
       end
 
