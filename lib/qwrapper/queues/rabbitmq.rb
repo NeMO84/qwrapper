@@ -36,7 +36,7 @@ module Qwrapper
       def publish(queue_name, messages, options={})
         messages = [messages] unless messages.is_a?(Array)
         queue = get_queue(queue_name, options={})
-        [messages].each do |message|
+        messages.each do |message|
           queue.publish(message.to_s, :persistent => true)
         end
         connection.close if connection
