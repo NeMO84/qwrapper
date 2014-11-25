@@ -26,6 +26,14 @@ module Qwrapper
       @config ||= {}
     end
 
+    def connect!
+      queue.connect! if queue
+    end
+
+    def disconnect!
+      queue.disconnect! if queue
+    end
+
     def queue
       @queue ||= begin
         base = Qwrapper::Queues::Base
