@@ -79,6 +79,7 @@ module Qwrapper
             port: config[:port] || 5672,
             username: config[:username] || "guest",
             password: config[:password] || "guest",
+            virtual_host: config[:virtual_host] || "/",
             logger: dup_logger,
             keepalive: config[:keepalive] || true
           })
