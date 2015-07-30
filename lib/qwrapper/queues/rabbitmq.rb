@@ -77,6 +77,8 @@ module Qwrapper
           c = Bunny.new({
             host: config[:host] || "localhost",
             port: config[:port] || 5672,
+            username: config[:username] || "guest",
+            password: config[:password] || "guest",
             logger: dup_logger,
             keepalive: config[:keepalive] || true
           })
