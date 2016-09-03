@@ -4,14 +4,11 @@ module Qwrapper
 
     class Base
 
-      include Loggable
-
       attr_accessor :config
       attr_reader :requeue_errors, :requeue_lambda
 
       def initialize(options)
         @config = options
-        @logger = options[:logger] if options.has_key?(:logger)
       end
 
       def requeue_errors
@@ -26,6 +23,12 @@ module Qwrapper
         @requeue_lambda ||= begin
           config[:requeue_lambda]
         end
+      end
+
+      private
+
+      def logger
+        Qwrapper.logger
       end
 
     end

@@ -3,8 +3,6 @@ require 'json'
 module Qwrapper
   class Message
 
-    include Loggable
-
     attr_reader :original_body, :hash
 
     def initialize(body)
@@ -36,6 +34,10 @@ module Qwrapper
 
     def validate!
       # TODO: Raise NotImplementedError? Client should implement their own custom error
+    end
+
+    def logger
+      Qwrapper.logger
     end
 
   end

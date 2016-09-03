@@ -1,7 +1,6 @@
 require 'bunny'
 require 'qwrapper/queues/base'
 
-
 module Qwrapper
 
   module Queues
@@ -17,7 +16,7 @@ module Qwrapper
           ch = connection.create_channel
           ch.prefetch(options[:prefetch] || 1)
           queue = ch.queue(queue_name, options.merge(durable: true))
-          queue.subscribe(ack: true, block: true) do |delivery_info, metadata, payload|
+          queue.subscribe(manual_ack: true, block: true) do |delivery_info, metadata, payload|
             begin
               if logger.respond_to?(:wrap)
                 logger_wrapped_block_execution(payload, &block)
@@ -52,7 +51,9 @@ module Qwrapper
             ch.prefetch(options[:prefetch] || 1)
             queue = ch.queue(queue_name, options.merge(durable: true))
             messages.each do |message|
-              queue.publish(message.to_s, :persistent => true)
+              message_options = {persistent: true}
+              message_options.merge!(expiration: options[:expiration]) unless options[:expiration].nil?
+              queue.publish(message.to_s, message_options)
             end
           end
         rescue Exception => ex
